@@ -58,4 +58,19 @@ ActiveAdmin.register Product do
       end
     end
   end
+
+  controller do
+    def update
+      new_product_params = permitted_params[:product]
+      if new_product_params[:images].all?(&:blank?)
+        new_product_params.delete(:images)
+      end
+
+      if resource.update(new_product_params)
+        redirect_to resource_path, notice: "Product was successfully updated."
+      else
+        render :edit, status: :unprocessable_entity
+      end
+    end
+  end
 end

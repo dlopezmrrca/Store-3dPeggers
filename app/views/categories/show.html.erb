@@ -4,7 +4,14 @@
       <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
     <% end %>
 
-    <%= render @category %>
+    
+
+    <div>
+      <h2>This is Category name is <%= @category.name %></h2>
+      <% @category.products.each do |product| %>
+        <%= render product %>
+      <% end %>
+    </div>
 
     <%= link_to "Edit this category", edit_category_path(@category), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
     <%= link_to "Back to categories", categories_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
