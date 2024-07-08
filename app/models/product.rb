@@ -2,6 +2,7 @@ class Product < ApplicationRecord
   validates :name, :description, :price, presence: true
   validates :description, length: { maximum: 500 }
   has_many_attached :images
+  belongs_to :category, optional: true
 
   def self.ransackable_associations(auth_object = nil)
     ["images_attachments", "images_blobs"]
