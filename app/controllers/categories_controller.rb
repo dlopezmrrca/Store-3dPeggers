@@ -1,4 +1,5 @@
 class CategoriesController < InheritedResources::Base
+  before_action :check_admin_priv, only: %i[ new create edit update destroy ]
 
   private
 
