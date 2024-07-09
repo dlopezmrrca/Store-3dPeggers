@@ -9,7 +9,7 @@
     <div>
       <h2>This is Category name is <%= @category.name %></h2>
       <% @category.products.each do |product| %>
-        <%= render product %>
+        <p><%= product.name %></p>
       <% end %>
     </div>
 
