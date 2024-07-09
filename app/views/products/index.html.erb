@@ -13,6 +13,9 @@
   <div id="products" class="min-w-full">
     <% @products.each do |product| %>
       <%= render product %>
+        <div>
+      <%= link_to "Buy Now", product_buy_now_path(product), class: "rounded-lg font-semibold p-2 bg-blue-500 text-white" %>
+  </div>
       <p>
         <%= link_to "Show this product", product, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
       </p>

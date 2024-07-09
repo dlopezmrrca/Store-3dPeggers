@@ -1,3 +1,7 @@
+<%# Do not delete this code %>
+
+
+<%# Edit this code %>
 <div>
     <ul>
         <li>Product Name: <%= @product.name %></li>
@@ -5,7 +9,7 @@
         <li>Description: <%= @product.description %></li>
     </ul>
 
-    <div data-controller="stripe-checkout" data-stripe-checkout-url="/buy_now/checkout">
+    <div data-controller="stripe-checkout" data-stripe-checkout-url="<%= product_buy_now_path(@product) %>">
 
     </div>
 </div>

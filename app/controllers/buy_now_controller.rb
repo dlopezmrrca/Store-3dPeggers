@@ -9,6 +9,7 @@ class BuyNowController < ApplicationController
           # Provide the exact Price ID (e.g. pr_1234) of the product you want to sell
           price_data: {
             currency: "usd",
+            # convert decimal price to cents
             unit_amount: (@product.price * 100).to_i,
             product_data: {
               name: @product.name
@@ -16,9 +17,9 @@ class BuyNowController < ApplicationController
           },
           quantity: 1,
         }],
-        shipping_address_collection: {
-          allowed_countries: STRIPE_SUPPORTED_COUNTRIES
-        },
+        # shipping_address_collection: {
+        #   allowed_countries: STRIPE_SUPPORTED_COUNTRIES
+        # },
         mode: 'payment',
         return_url: success_product_buy_now_url(@product),
     })
