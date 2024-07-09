@@ -73,3 +73,5 @@ gem 'devise'
 gem 'sass-rails'
 gem 'kaminari'
 gem 'will_paginate'
+
+gem "stripe", "~> 12.1"
