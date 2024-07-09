@@ -4,4 +4,8 @@
         <li>Price: <%= @product.price %></li>
         <li>Description: <%= @product.description %></li>
     </ul>
+
+    <div data-controller="stripe-checkout" data-stripe-checkout-url="/buy_now/checkout">
+
+    </div>
 </div>

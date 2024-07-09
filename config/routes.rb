@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   resources :products do
-    resource :buy_now, only: [:show], controller: :buy_now
+    resource :buy_now, only: [:show, :create], controller: :buy_now
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
