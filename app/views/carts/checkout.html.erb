@@ -1,0 +1,15 @@
+<%# Edit this code %>
+<div>
+
+        <p>There are <%= @current_cart.cart_items.count %> items in your cart</p>
+        <% @current_cart.products.each.with_index do |product, index| %>
+            <p><%= index + 1 %></p>
+            <p><%= product.name %></p>
+        <% end %>
+
+
+<div data-controller="stripe-checkout" data-stripe-checkout-url="<%= stripe_session_cart_path(@current_cart.cart_id) %>"></div>
+
+
+    </div>
+</div>

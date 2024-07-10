@@ -1,0 +1,14 @@
+<div>
+    <h1>I am your Ugly cart edit me</h1>
+    <% if @current_cart.cart_items.any? %>
+  <p>There are <%= @current_cart.cart_items.count %> items in your cart</p>
+  <%= link_to "Checkout Now", checkout_cart_path(@current_cart.cart_id), class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium"  %>
+<% else %>
+  <p>There are no items in your cart</p>
+<% end %>
+
+<% @current_cart.cart_items.each do |cart_item| %>
+  <p><%= cart_item.product.name %></p>
+  <p><%= cart_item.product.price %></p>
+<% end %>
+</div>
