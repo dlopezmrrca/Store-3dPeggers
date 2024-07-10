@@ -5,10 +5,11 @@
         <% @current_cart.products.each.with_index do |product, index| %>
             <p><%= index + 1 %></p>
             <p><%= product.name %></p>
+            <p><%= product.price %></p>
         <% end %>
 
 
-<div data-controller="stripe-checkout" data-stripe-checkout-url="<%= stripe_session_cart_path(@current_cart.cart_id) %>"></div>
+<div data-controller="stripe-checkout" data-stripe-checkout-url-value="<%= stripe_session_cart_path(@current_cart.cart_id) %>"></div>
 
 
     </div>

@@ -22,7 +22,10 @@
   </p>
   <%# Change this later %>
           <%= link_to "Buy Now", product_buy_now_path(product), class: "rounded-lg font-semibold p-2 bg-blue-500 text-white" %>
-          <%= render "products/add_to_cart", product: @product %>
+          <div id="add-to-cart">
+            <%= render "products/add_to_cart", product: @product %>
+          </div>
+          
         
 
 </div>

@@ -10,5 +10,6 @@
 <% @current_cart.cart_items.each do |cart_item| %>
   <p><%= cart_item.product.name %></p>
   <p><%= cart_item.product.price %></p>
+  <%= link_to "Remove this item", cart_path(@current_cart.cart_id, product_id: @product.id), class: "ml-2 rounded-lg py-3 px-5 bg-yellow-600 inline-block font-medium" %>
 <% end %>
 </div>

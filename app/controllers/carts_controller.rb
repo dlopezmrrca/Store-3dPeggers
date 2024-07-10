@@ -1,14 +1,18 @@
 class CartsController < ApplicationController
- before_action :set_current_cart
+  before_action :set_product, only: [:create, :destroy]
  def create
-  @current_cart.cart_items.create(product_id: params[:product_id])
+  @current_cart.cart_items.create(product_id: @product.id)
  end
  def show
 
  end
 
  def checkout
+ end
 
+ def destroy
+  @cart_item = @current_cart.cart_items.find_by_product_id(@product.id)
+  @cart_item.destroy
  end
 
  def stripe_session
@@ -33,5 +37,16 @@ class CartsController < ApplicationController
 end
 
  def success
+  if @current_cart.cart_items.any?
+    session[:current_cart_id] = nil
+  end
+  @purchased_cart = Cart.find_by_cart_id(params[:id])
+  redirect_to root_path if !@purchased_cart
  end
+
+ private
+ def set_product
+  @product = Product.find(params[:product_id])
+end
+
 end

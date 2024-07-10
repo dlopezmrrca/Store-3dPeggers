@@ -1,8 +1,10 @@
 class Cart < ApplicationRecord
-  has_many :cart_items
+  has_many :cart_items, dependent: :destroy
   has_many :products, through: :cart_items
 
   before_create :set_cart_id
+
+  enum :status, ["pending", "complete"]
 
   private
   def set_cart_id
