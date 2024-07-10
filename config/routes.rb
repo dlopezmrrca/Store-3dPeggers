@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
-  devise_for :customers
+  devise_for :customers, controllers: {
+    sessions: 'devise/sessions',
+    registrations: 'devise/registrations',
+    passwords: 'devise/passwords'
+  }
+
   resources :categories
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
