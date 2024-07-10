@@ -30,14 +30,7 @@
           <a class="my-1 text-sm text-gray-700 leading-5 hover:text-blue-600 hover:underline md:mx-4 md:my-0" href="#">Contact</a>
         </div>
         <%= link_to cart_path(@current_cart.cart_id) do %>
-        <div class="relative">
-          <%= image_tag("cart.png", class: "w-10 h-10") %>
-          <% if @current_cart && @current_cart.cart_items.any?%>
-          <div class="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">
-            <%= @current_cart.cart_items.count%>
-          </div>
-          <% end %>
-        </div>
+          <%= render "layouts/cart", cart: @current_cart %>
         <% end %>
         <div class="flex items-center py-2 -mx-1 md:mx-0">
 

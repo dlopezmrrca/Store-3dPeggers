@@ -13,7 +13,8 @@ class CartsController < ApplicationController
  def destroy
   @cart_item = @current_cart.cart_items.find_by_product_id(@product.id)
   @cart_item.destroy
- end
+  redirect_to cart_path(@current_cart)
+end
 
  def stripe_session
   session = Stripe::Checkout::Session.create({
@@ -45,8 +46,9 @@ end
  end
 
  private
+
  def set_product
-  @product = Product.find(params[:product_id])
-end
+   @product = Product.find(params[:product_id])
+ end
 
 end
