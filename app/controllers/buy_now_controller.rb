@@ -17,9 +17,6 @@ class BuyNowController < ApplicationController
           },
           quantity: 1,
         }],
-        # shipping_address_collection: {
-        #   allowed_countries: STRIPE_SUPPORTED_COUNTRIES
-        # },
         mode: 'payment',
         return_url: success_product_buy_now_url(@product),
     })
