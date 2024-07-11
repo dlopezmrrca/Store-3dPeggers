@@ -2,19 +2,15 @@
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   <% end %>
-  <% content_for :title, "Products" %>
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Products</h1>
-    <%= link_to "New product", new_product_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
-  </div>
-  <div id="products" class="min-w-full">
+  <div id="products" class="min-w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
     <% @products.each do |product| %>
-      <p><%= product.name %></p>
-            <%= link_to "Show this product", product, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    </div>
-    <p>
-
-    </p>
-  <% end %>
-</div>
+      <%= link_to product, class: "block bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center" do %>
+        <%= image_tag product.images.first, class: "w-full h-40 object-cover rounded-lg mb-4" %>
+        <h2 class="font-bold text-2xl my-2"><%= product.name %></h2>
+        <% before_price = product.price + 20 %>
+        <p class="text-lg font-semibold text-gray-600 line-through"><%= number_to_currency before_price %></p>
+        <p class="text-3xl font-bold text-red-500 my-2"><%= number_to_currency product.price %></p>
+      <% end %>
+    <% end %>
+  </div>
 </div>
