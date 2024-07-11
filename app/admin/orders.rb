@@ -1,18 +1,74 @@
 ActiveAdmin.register Order do
+  permit_params :stripe_payment_id, :customer_id
 
-  # See permitted parameters documentation:
-  # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-  #
-  # Uncomment all parameters which should be permitted for assignment
-  #
-  permit_params :customer_id, :stripe_payment_id
-  #
-  # or
-  #
-  # permit_params do
-  #   permitted = [:customer_id, :stripe_payment_id]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
+  index do
+    selectable_column
+    id_column
+    column :customer
+    column :stripe_payment_id
+    column :created_at
+    column :updated_at
+    actions
+  end
 
+  show do
+    attributes_table do
+      row :customer
+      row :stripe_payment_id
+      row :created_at
+      row :updated_at
+    end
+
+    panel "Order Items" do
+      table_for order.order_items do
+        column :product
+        column :quantity
+        column :price do |item|
+          number_to_currency item.price
+        end
+        column :total_price do |item|
+          number_to_currency item.price * item.quantity
+        end
+      end
+    end
+
+    panel "Total Amount Paid" do
+      total_price = order.order_items.sum { |item| item.price * item.quantity }
+      customer_province = order.customer.province
+      gst = order.order_items.sum { |item| item.price * item.quantity * customer_province.gst_rate }
+      pst = order.order_items.sum { |item| item.price * item.quantity * customer_province.pst_rate }
+      hst = order.order_items.sum { |item| item.price * item.quantity * customer_province.hst_rate }
+      qst = order.order_items.sum { |item| item.price * item.quantity * customer_province.qst_rate }
+      grand_total = total_price + gst + pst + hst + qst
+
+      attributes_table_for order do
+        row :subtotal do
+          number_to_currency total_price
+        end
+        row :total_gst do
+          number_to_currency gst
+        end
+        row :total_pst do
+          number_to_currency pst
+        end
+        row :total_hst do
+          number_to_currency hst
+        end
+        row :total_qst do
+          number_to_currency qst
+        end
+        row :grand_total do
+          number_to_currency grand_total
+        end
+      end
+    end
+  end
+
+  form do |f|
+    f.inputs do
+      f.input :customer
+      f.input :stripe_payment_id
+    end
+    f.actions
+  end
 end
