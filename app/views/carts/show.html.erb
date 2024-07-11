@@ -2,6 +2,7 @@
   <div class="flex justify-between w-full items-center">  
     <div class="flex flex-col gap-4">
       <h1 class="text-5xl"> Your cart </h1>
+      <p>I am show cart</p>
       <% if @current_cart.cart_items.any? %>
         <p class="text-lg"> You have <%= @current_cart.cart_items.count %> items in your cart </p>
       <% else %>
