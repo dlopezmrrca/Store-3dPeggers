@@ -1,5 +1,6 @@
 class CartsController < ApplicationController
   before_action :set_product, only: [:create, :destroy]
+  before_action :set_province, only: [:show, :checkout, :stripe_session, :success]
 
   def create
     @cart_item = @current_cart.cart_items.find_by(product_id: @product.id)
@@ -12,9 +13,11 @@ class CartsController < ApplicationController
 
   def show
     @total_quantity = @current_cart.cart_items.sum(:quantity)
+    @total_price = calculate_total_price_with_taxes(@current_cart.cart_items, @province)
   end
 
   def checkout
+    @total_price = calculate_total_price_with_taxes(@current_cart.cart_items, @province)
   end
 
   def destroy
@@ -24,13 +27,15 @@ class CartsController < ApplicationController
   end
 
   def stripe_session
+    total_price_with_taxes = calculate_total_price_with_taxes(@current_cart.cart_items, @province)
+
     session = Stripe::Checkout::Session.create({
       ui_mode: 'embedded',
       line_items: @current_cart.cart_items.map do |item|
         {
           price_data: {
             currency: "usd",
-            unit_amount: (item.product.price * 100).to_i,
+            unit_amount: (calculate_unit_price_with_taxes(item) * 100).to_i,
             product_data: {
               name: item.product.name
             },
@@ -46,11 +51,27 @@ class CartsController < ApplicationController
   end
 
   def success
-    if @current_cart.cart_items.any?
-      session[:current_cart_id] = nil
-    end
     @purchased_cart = Cart.find_by_cart_id(params[:id])
-    redirect_to root_path if !@purchased_cart
+    redirect_to root_path unless @purchased_cart
+
+    @province ||= Province.first
+
+    @invoice_items = @purchased_cart.cart_items.map do |item|
+      {
+        name: item.product.name,
+        quantity: item.quantity,
+        price: item.product.price,
+        total_price: item.product.price * item.quantity,
+        gst: item.product.price * @province.gst_rate * item.quantity,
+        pst: item.product.price * @province.pst_rate * item.quantity,
+        hst: item.product.price * @province.hst_rate * item.quantity,
+        qst: item.product.price * @province.qst_rate * item.quantity,
+      }
+    end
+
+    clear_cart_items
+
+    session[:current_cart_id] = nil if @current_cart.cart_items.empty?
   end
 
   def update
@@ -66,5 +87,33 @@ class CartsController < ApplicationController
 
   def set_product
     @product = Product.find(params[:product_id])
+  end
+
+  def set_province
+    @province = Province.find(params[:province_id]) if params[:province_id].present?
+  end
+
+  def calculate_total_price_with_taxes(cart_items, province)
+    total_price = 0
+    cart_items.each do |item|
+      total_price += calculate_unit_price_with_taxes(item) * item.quantity
+    end
+    total_price
+  end
+
+  def calculate_unit_price_with_taxes(cart_item)
+    unit_price = cart_item.product.price
+    if @province
+      gst = unit_price * @province.gst_rate
+      pst = unit_price * @province.pst_rate
+      hst = unit_price * @province.hst_rate
+      qst = unit_price * @province.qst_rate
+      unit_price += gst + pst + hst + qst
+    end
+    unit_price
+  end
+
+  def clear_cart_items
+    @current_cart.cart_items.destroy_all
   end
 end

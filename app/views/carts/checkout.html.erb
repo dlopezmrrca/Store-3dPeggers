@@ -1,16 +1,19 @@
-<%# Edit this code %>
 <div>
+  <p>There are <%= @current_cart.cart_items.count %> items in your cart</p>
+  <% @current_cart.cart_items.each.with_index do |cart_item, index| %>
+    <p><%= index + 1 %></p>
+    <p><%= cart_item.product.name %></p>
+    <p>Price: <%= number_to_currency(cart_item.product.price) %></p>
+  <% end %>
 
-        <p>There are <%= @current_cart.cart_items.count %> items in your cart</p>
-        <% @current_cart.products.each.with_index do |product, index| %>
-            <p><%= index + 1 %></p>
-            <p><%= product.name %></p>
-            <p><%= product.price %></p>
-        <% end %>
+  <%= form_with url: checkout_cart_path(@current_cart), method: :get, local: true do |form| %>
+    <%= form.label :province_id, "Select your province" %>
+    <%= form.collection_select :province_id, Province.all, :id, :province_name, { prompt: "Select Province", selected: @province.try(:id) }, { onchange: "this.form.submit();" } %>
+  <% end %>
 
-
-<div data-controller="stripe-checkout" data-stripe-checkout-url-value="<%= stripe_session_cart_path(@current_cart.cart_id) %>"></div>
-
-
-    </div>
+  <% if @province %>
+    <p class="text-lg">Total price with taxes: <%= number_to_currency(@total_price) %></p>
+    
+    <div data-controller="stripe-checkout" data-stripe-checkout-url-value="<%= stripe_session_cart_path(@current_cart.cart_id, province_id: params[:province_id]) %>"></div>
+  <% end %>
 </div>
