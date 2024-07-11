@@ -4,7 +4,10 @@
       Already in Cart
     </div>
   <% else %>
-    <%= link_to "Add To Cart", carts_path(product_id: @product.id), class: "rounded-lg font-semibold p-4 text-center text-xl bg-gray-400 hover:bg-gray-500 w-full",
-        data: { turbo_method: "post" } %>
+    <%= form_with url: carts_path, method: :post, local: true do |form| %>
+      <%= form.hidden_field :product_id, value: @product.id %>
+      <%= form.number_field :quantity, value: 1, min: 1, class: "rounded-lg font-semibold p-4 text-center text-xl bg-gray-400 hover:bg-gray-500 w-full" %>
+      <%= form.submit "Add To Cart", class: "rounded-lg font-semibold p-4 text-center text-xl bg-gray-400 hover:bg-gray-500 w-full" %>
+    <% end %>
   <% end %>
 </div>

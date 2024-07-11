@@ -4,7 +4,7 @@
       <h1 class="text-5xl"> Your cart </h1>
       <p>I am show cart</p>
       <% if @current_cart.cart_items.any? %>
-        <p class="text-lg"> You have <%= @current_cart.cart_items.count %> items in your cart </p>
+        <p class="text-lg"> You have <%= @total_quantity %> items in your cart </p>
       <% else %>
         <p class="text-lg"> You don't have any items in your cart yet </p>
       <% end %>
@@ -14,14 +14,21 @@
   </div>
 
   <br/>
-  
+
   <div id="products" class="min-w-full grid md:grid-cols-4 gap-8">
-    <% @current_cart.products.each do |product| %>
+    <% @current_cart.cart_items.each do |cart_item| %>
       <div>
-        <p><%= product.name %></p>
-        <p><%= product.price %></p>
+        <p><%= cart_item.product.name %></p>
+        <p>Price: <%= cart_item.product.price %></p>
+        <%= form_with model: cart_item, url: cart_path(cart_item), method: :patch, local: true do |form| %>
+          <div class="flex items-center">
+            <%= form.label :quantity, "Quantity:", class: "mr-2" %>
+            <%= form.number_field :quantity, value: cart_item.quantity, min: 1, class: "rounded-lg font-semibold p-2 text-center text-xl bg-gray-200" %>
+            <%= form.submit "Update", class: "ml-2 rounded-lg font-semibold p-2 text-center text-xl bg-blue-400 hover:bg-blue-500" %>
+          </div>
+        <% end %>
         <br/>
-        <%= link_to "Remove from cart", cart_path(@current_cart.cart_id, product_id: product.id), class: "p-2 rounded-lg bg-indigo-500 text-indigo-100",
+        <%= link_to "Remove from cart", cart_path(@current_cart.cart_id, product_id: cart_item.product.id), class: "p-2 rounded-lg bg-indigo-500 text-indigo-100",
             data: { turbo_method: "delete" } %>
       </div>
     <% end %>
