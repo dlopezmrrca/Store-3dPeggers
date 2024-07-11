@@ -1,6 +1,7 @@
 class CartsController < ApplicationController
+  before_action :authenticate_customer! # Ensure customer is logged in
   before_action :set_product, only: [:create, :destroy]
-  before_action :set_province, only: [:show, :checkout, :stripe_session, :success]
+  before_action :set_province, only: [:show, :checkout, :stripe_session]
   before_action :set_current_customer
 
   def create
@@ -45,7 +46,7 @@ class CartsController < ApplicationController
         }
       end,
       mode: 'payment',
-      return_url: success_cart_url(@current_cart.cart_id),
+      return_url: success_cart_url(@current_cart.cart_id, province_id: @province.id),
     })
 
     render json: { clientSecret: session.client_secret }
@@ -55,19 +56,33 @@ class CartsController < ApplicationController
     @purchased_cart = Cart.find_by_cart_id(params[:id])
     redirect_to root_path unless @purchased_cart
 
-    @province ||= Province.first # Set a default province if none is selected
+    if params[:province_id].present?
+      @province = Province.find(params[:province_id])
+    else
+      redirect_to root_path, alert: 'No province selected'
+      return
+    end
+
+    # Ensure the current customer is set
+    unless @current_customer
+      redirect_to root_path, alert: 'No customer found'
+      return
+    end
 
     # Create the order and order items
     ActiveRecord::Base.transaction do
-      order = @current_customer.orders.create!(stripe_payment_id: params[:payment_intent])
+      order = @current_customer.orders.create!(stripe_payment_id: params[:payment_intent], province_id: @province.id)
 
       @invoice_items = @current_cart.cart_items.map do |cart_item|
         order.order_items.create!(
           product: cart_item.product,
           quantity: cart_item.quantity,
-          price: calculate_unit_price_with_taxes(cart_item)
+          price: cart_item.product.price
         )
       end
+
+      total_order_price = @invoice_items.sum { |item| item.quantity * item.price }
+      order.update!(total_price: total_order_price)
     end
 
     # Clear the cart
@@ -96,7 +111,7 @@ class CartsController < ApplicationController
   end
 
   def set_current_customer
-    @current_customer = Customer.find_by(email: 'daniel@test.com') # Replace this with actual current customer logic
+    @current_customer = current_customer
   end
 
   def calculate_total_price_with_taxes(cart_items, province)

@@ -1,5 +1,6 @@
 ActiveAdmin.register Order do
   permit_params :stripe_payment_id, :customer_id
+  remove_filter :total_price
 
   index do
     selectable_column
@@ -10,6 +11,7 @@ ActiveAdmin.register Order do
     column :updated_at
     actions
   end
+
 
   show do
     attributes_table do
