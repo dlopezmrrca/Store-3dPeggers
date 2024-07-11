@@ -1,27 +1,27 @@
 <div class="w-full flex flex-col items-center md:pt-8">
   <div class="h-[40vh] w-full mb-8 flex flex-col items-center justify-center gap-4 bg-repeat-round">
-    <h2 class="text-5xl font-semibold text-indigo-100"> Thank you for purchasing! </h2>
-    <p class="text-xl font-semibold text-indigo-50"> All of your products will be shipped shortly </p> 
+    <h2 class="text-5xl font-semibold"> Thank you for purchasing! </h2>
   </div>
-  <h1 class="text-5xl font-broken text-indigo-900 text-center"> <%= @purchased_cart.products.map(&:name).join(", ") %> </h1>
-  <div class="mx-auto flex flex-col gap-2"> 
-    <% @purchased_cart.products.each.with_index do |product, index| %>
+  <h1 class="text-5xl font-broken text-indigo-900 text-center"> 
+    <%= @purchased_cart.products.map(&:name).join(", ") %> 
+  </h1>
+  <div class="mx-auto flex flex-col gap-2">
+    <% @invoice_items.each.with_index do |item, index| %>
       <div class="flex gap-2 bg-gray-700/75 p-2">
         <span class="px-2 rounded-full bg-gray-500 text-gray-100"> <%= index + 1 %> </span>
-        <p class="text-indigo-100"> <%= product.name %> </p>
-        <p class="text-green-500"> <%= number_to_currency product.price %> </p>
+        <p class="text-indigo-100"> <%= item[:name] %> </p>
+        <p class="text-green-500"> Price: <%= number_to_currency item[:price] %> </p>
+        <p class="text-green-500"> Quantity: <%= item[:quantity] %> </p>
+        <p class="text-green-500"> Total Price: <%= number_to_currency item[:total_price] %> </p>
+        <p class="text-green-500"> GST: <%= number_to_currency item[:gst] %> </p>
+        <p class="text-green-500"> PST: <%= number_to_currency item[:pst] %> </p>
+        <p class="text-green-500"> HST: <%= number_to_currency item[:hst] %> </p>
+        <p class="text-green-500"> QST: <%= number_to_currency item[:qst] %> </p>
       </div>
     <% end %>
   </div>
-</div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    if (!localStorage.getItem('hasReloaded')) {
-      localStorage.setItem('hasReloaded', 'true');
-      window.location.reload();
-    } else {
-      localStorage.removeItem('hasReloaded');
-    }
-  });
-</script>
+  <div class="mx-auto flex flex-col gap-2 mt-4">
+    <h3 class="text-3xl font-semibold">Invoice Summary</h3>
+    <p class="text-lg">Subtotal: <%= number_to_currency @invoice_items.sum { |item| item[:total_price] } %></p>
+    <p class="text-lg">Total GST: <%= number_to_currency @invoice_items.sum { |item| item[:gst] } %></p>
+    
