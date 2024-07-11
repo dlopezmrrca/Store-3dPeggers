@@ -9,19 +9,35 @@
     <% @invoice_items.each.with_index do |item, index| %>
       <div class="flex gap-2 bg-gray-700/75 p-2">
         <span class="px-2 rounded-full bg-gray-500 text-gray-100"> <%= index + 1 %> </span>
-        <p class="text-indigo-100"> <%= item[:name] %> </p>
-        <p class="text-green-500"> Price: <%= number_to_currency item[:price] %> </p>
-        <p class="text-green-500"> Quantity: <%= item[:quantity] %> </p>
-        <p class="text-green-500"> Total Price: <%= number_to_currency item[:total_price] %> </p>
-        <p class="text-green-500"> GST: <%= number_to_currency item[:gst] %> </p>
-        <p class="text-green-500"> PST: <%= number_to_currency item[:pst] %> </p>
-        <p class="text-green-500"> HST: <%= number_to_currency item[:hst] %> </p>
-        <p class="text-green-500"> QST: <%= number_to_currency item[:qst] %> </p>
+        <p class="text-indigo-100"> <%= item.product.name %> </p>
+        <p class="text-green-500"> Price: <%= number_to_currency item.price %> </p>
+        <p class="text-green-500"> Quantity: <%= item.quantity %> </p>
+        <p class="text-green-500"> Total Price: <%= number_to_currency item.price * item.quantity %> </p>
+        <p class="text-green-500"> GST: <%= number_to_currency item.price * @province.gst_rate * item.quantity %> </p>
+        <p class="text-green-500"> PST: <%= number_to_currency item.price * @province.pst_rate * item.quantity %> </p>
+        <p class="text-green-500"> HST: <%= number_to_currency item.price * @province.hst_rate * item.quantity %> </p>
+        <p class="text-green-500"> QST: <%= number_to_currency item.price * @province.qst_rate * item.quantity %> </p>
       </div>
     <% end %>
   </div>
   <div class="mx-auto flex flex-col gap-2 mt-4">
     <h3 class="text-3xl font-semibold">Invoice Summary</h3>
-    <p class="text-lg">Subtotal: <%= number_to_currency @invoice_items.sum { |item| item[:total_price] } %></p>
-    <p class="text-lg">Total GST: <%= number_to_currency @invoice_items.sum { |item| item[:gst] } %></p>
-    
+    <p class="text-lg">Subtotal: <%= number_to_currency @invoice_items.sum { |item| item.price * item.quantity } %></p>
+    <p class="text-lg">Total GST: <%= number_to_currency @invoice_items.sum { |item| item.price * @province.gst_rate * item.quantity } %></p>
+    <p class="text-lg">Total PST: <%= number_to_currency @invoice_items.sum { |item| item.price * @province.pst_rate * item.quantity } %></p>
+    <p class="text-lg">Total HST: <%= number_to_currency @invoice_items.sum { |item| item.price * @province.hst_rate * item.quantity } %></p>
+    <p class="text-lg">Total QST: <%= number_to_currency @invoice_items.sum { |item| item.price * @province.qst_rate * item.quantity } %></p>
+    <p class="text-lg font-bold">Grand Total: <%= number_to_currency @invoice_items.sum { |item| item.price * item.quantity + item.price * @province.gst_rate * item.quantity + item.price * @province.pst_rate * item.quantity + item.price * @province.hst_rate * item.quantity + item.price * @province.qst_rate * item.quantity } %></p>
+  </div>
+</div>
+
+<%# <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    if (!localStorage.getItem('hasReloaded')) {
+      localStorage.setItem('hasReloaded', 'true');
+      window.location.reload();
+    } else {
+      localStorage.removeItem('hasReloaded');
+    }
+  });
+</script> %>

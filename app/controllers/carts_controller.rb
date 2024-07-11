@@ -1,6 +1,7 @@
 class CartsController < ApplicationController
   before_action :set_product, only: [:create, :destroy]
   before_action :set_province, only: [:show, :checkout, :stripe_session, :success]
+  before_action :set_current_customer
 
   def create
     @cart_item = @current_cart.cart_items.find_by(product_id: @product.id)
@@ -54,21 +55,22 @@ class CartsController < ApplicationController
     @purchased_cart = Cart.find_by_cart_id(params[:id])
     redirect_to root_path unless @purchased_cart
 
-    @province ||= Province.first
+    @province ||= Province.first # Set a default province if none is selected
 
-    @invoice_items = @purchased_cart.cart_items.map do |item|
-      {
-        name: item.product.name,
-        quantity: item.quantity,
-        price: item.product.price,
-        total_price: item.product.price * item.quantity,
-        gst: item.product.price * @province.gst_rate * item.quantity,
-        pst: item.product.price * @province.pst_rate * item.quantity,
-        hst: item.product.price * @province.hst_rate * item.quantity,
-        qst: item.product.price * @province.qst_rate * item.quantity,
-      }
+    # Create the order and order items
+    ActiveRecord::Base.transaction do
+      order = @current_customer.orders.create!(stripe_payment_id: params[:payment_intent])
+
+      @invoice_items = @current_cart.cart_items.map do |cart_item|
+        order.order_items.create!(
+          product: cart_item.product,
+          quantity: cart_item.quantity,
+          price: calculate_unit_price_with_taxes(cart_item)
+        )
+      end
     end
 
+    # Clear the cart
     clear_cart_items
 
     session[:current_cart_id] = nil if @current_cart.cart_items.empty?
@@ -91,6 +93,10 @@ class CartsController < ApplicationController
 
   def set_province
     @province = Province.find(params[:province_id]) if params[:province_id].present?
+  end
+
+  def set_current_customer
+    @current_customer = Customer.find_by(email: 'daniel@test.com') # Replace this with actual current customer logic
   end
 
   def calculate_total_price_with_taxes(cart_items, province)
