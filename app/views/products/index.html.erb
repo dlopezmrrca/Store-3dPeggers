@@ -2,6 +2,17 @@
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   <% end %>
+
+    <% image_url = asset_path('bg.png') %>
+  <div class="h-64 bg-cover bg-center" style="background-image: url('<%= image_url %>');">
+    <!-- Debugging output -->
+  </div>
+  
+   <!-- Include the search form partial here -->
+   <div class="mt-3">
+    <%= render 'shared/search_form' %>
+   </div>
+  
   <div id="products" class="min-w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
     <% @products.each do |product| %>
       <%= link_to product, class: "block bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center" do %>

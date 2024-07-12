@@ -4,7 +4,14 @@ class ProductsController < ApplicationController
 
   # GET /products or /products.json
   def index
+    @keyword = params[:keyword]
+    @category_id = params[:category]
+
     @products = Product.all
+    @products = @products.where("name LIKE ? OR description LIKE ?", "%#{@keyword}%", "%#{@keyword}%") if @keyword.present?
+    @products = @products.where(category_id: @category_id) if @category_id.present?
+
+    @categories = Category.all
   end
 
   # GET /products/1 or /products/1.json
