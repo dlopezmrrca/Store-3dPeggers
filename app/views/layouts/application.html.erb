@@ -10,6 +10,8 @@
     <%= javascript_importmap_tags %>
     <meta name="stripe-pk" content="<%= Rails.application.credentials.dig(:stripe, :pk) %>">
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.0/dist/alpine.min.js" defer></script>
+
   </head>
 
   <body>
