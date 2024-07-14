@@ -1,0 +1,35 @@
+<!-- app/views/shared/_pagination.html.erb -->
+<div class="mt-6 px-4 flex justify-end space-x-2">
+  <% if @products.total_pages > 1 %>
+    <% if @products.current_page > 1 %>
+      <%= link_to '‹ Prev', url_for(page: @products.current_page - 1), class: 'px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100' %>
+    <% end %>
+
+    <% first_page = @products.current_page - 2 %>
+    <% last_page = @products.current_page + 2 %>
+
+    <% if first_page > 1 %>
+      <%= link_to 1, url_for(page: 1), class: 'px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100' %>
+      <% if first_page > 2 %>
+        <span class="px-3 py-2">...</span>
+      <% end %>
+    <% end %>
+
+    <% (first_page..last_page).each do |page| %>
+      <% if page > 0 && page <= @products.total_pages %>
+        <%= link_to page, url_for(page: page), class: page == @products.current_page ? 'px-3 py-2 border border-orange-500 rounded-lg bg-orange-500 text-white' : 'px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100' %>
+      <% end %>
+    <% end %>
+
+    <% if last_page < @products.total_pages %>
+      <% if last_page < @products.total_pages - 1 %>
+        <span class="px-3 py-2">...</span>
+      <% end %>
+      <%= link_to @products.total_pages, url_for(page: @products.total_pages), class: 'px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100' %>
+    <% end %>
+
+    <% if @products.current_page < @products.total_pages %>
+      <%= link_to 'Next ›', url_for(page: @products.current_page + 1), class: 'px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100' %>
+    <% end %>
+  <% end %>
+</div>
