@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   devise_for :customers, controllers: {
     sessions: 'devise/sessions',
-    registrations: 'devise/registrations',
+    registrations: 'registrations',
     passwords: 'devise/passwords'
   }
 
@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   resources :products do
-    resource :buy_now, only: [:show, :create], controller: :buy_now do
+    resource :buy_now, only: [:show, :create, :index], controller: :buy_now do
       get "success", on: :collection
     end
   end

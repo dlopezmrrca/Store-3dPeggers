@@ -1,13 +1,16 @@
-<div id="add-to-cart" class="w-full flex">
+<div id="add-to-cart" class="w-full flex flex-col space-y-4">
   <% if @current_cart && @current_cart.products.where(id: @product.id).any? %>
-    <div class="rounded-lg font-semibold p-4 text-center text-xl bg-gray-400 hover:bg-gray-500 w-full">
-      Already in Cart
-    </div>
+    <%= link_to cart_path(@current_cart.id), class: "rounded-lg font-semibold p-4 text-center text-xl bg-yellow-400 hover:bg-gray-500 w-full" do %>
+      Added! - View Cart
+    <% end %>
   <% else %>
-    <%= form_with url: carts_path, method: :post, local: true do |form| %>
+    <%= form_with url: carts_path, method: :post, local: true, class: "w-full" do |form| %>
       <%= form.hidden_field :product_id, value: @product.id %>
-      <%= form.number_field :quantity, value: 1, min: 1, class: "rounded-lg font-semibold p-4 text-center text-xl bg-gray-400 hover:bg-gray-500 w-full" %>
-      <%= form.submit "Add To Cart", class: "rounded-lg font-semibold p-4 text-center text-xl bg-gray-400 hover:bg-gray-500 w-full" %>
+      <div class="flex items-center space-x-4">
+        <%= form.label :quantity, "Quantity:", class: "font-medium text-xl" %>
+        <%= form.number_field :quantity, value: 1, min: 1, class: "rounded-lg font-semibold p-4 text-center text-xl bg-white border border-gray-300 w-20" %>
+      </div>
+      <%= form.submit "Add To Cart", class: "rounded-lg font-semibold p-4 text-center text-xl bg-yellow-400 hover:bg-yellow-500 mt-4 w-full cursor-pointer" %>
     <% end %>
   <% end %>
 </div>

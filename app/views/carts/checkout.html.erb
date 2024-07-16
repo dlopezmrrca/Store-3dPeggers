@@ -1,19 +1,50 @@
-<div>
-  <p>There are <%= @current_cart.cart_items.count %> items in your cart</p>
-  <% @current_cart.cart_items.each.with_index do |cart_item, index| %>
-    <p><%= index + 1 %></p>
-    <p><%= cart_item.product.name %></p>
-    <p>Price: <%= number_to_currency(cart_item.product.price) %></p>
-  <% end %>
+<div class="w-full flex flex-col lg:flex-row">
+  <!-- Columna izquierda con la información del carrito -->
+  <div class="w-full lg:w-3/4 bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+    <h2 class="font-bold text-3xl mb-5">Hello, <%= current_customer.first_name %></h2>
 
-  <%= form_with url: checkout_cart_path(@current_cart), method: :get, local: true do |form| %>
-    <%= form.label :province_id, "Select your province" %>
-    <%= form.collection_select :province_id, Province.all, :id, :province_name, { prompt: "Select Province", selected: @province.try(:id) }, { onchange: "this.form.submit();" } %>
-  <% end %>
+    <% if @current_cart.cart_items.any? %>
+      <table class="min-w-full bg-white rounded-lg shadow-md">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="text-left py-3 px-4 font-semibold text-sm">#</th>
+            <th class="text-left py-3 px-4 font-semibold text-sm">Product</th>
+            <th class="text-left py-3 px-4 font-semibold text-sm">Price</th>
+            <th class="text-left py-3 px-4 font-semibold text-sm">Qty</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @current_cart.cart_items.each.with_index(1) do |cart_item, index| %>
+            <tr class="border-b">
+              <td class="py-3 px-4 text-sm"><%= index %></td>
+              <td class="py-3 px-4 text-sm"><%= cart_item.product.name %></td>
+              <td class="py-3 px-4 text-sm"><%= number_to_currency(cart_item.product.price) %></td>
+              <td class="py-3 px-4 text-sm"><%= cart_item.quantity %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
 
+    <%= form_with url: checkout_cart_path(@current_cart), method: :get, local: true, class: "mt-5" do |form| %>
+      <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
+        <%= form.label :province_id, "Select your province", class: "text-lg font-medium" %>
+        <%= form.collection_select :province_id, Province.all, :id, :province_name, { prompt: "Select Province", selected: @province.try(:id) }, { class: "rounded-lg p-2 border border-gray-300", onchange: "this.form.submit();" } %>
+      </div>
+    <% end %>
+
+    <% if @province %>
+      <p class="text-lg mt-5">Total price with taxes: <%= number_to_currency(@total_price) %></p>
+    <% end %>
+  </div>
+
+  <!-- Columna derecha con el formulario de pago de Stripe -->
   <% if @province %>
-    <p class="text-lg">Total price with taxes: <%= number_to_currency(@total_price) %></p>
-    
-    <div data-controller="stripe-checkout" data-stripe-checkout-url-value="<%= stripe_session_cart_path(@current_cart.cart_id, province_id: params[:province_id]) %>"></div>
+    <div class="w-full lg:w-1/4 my-5 lg:my-0 lg:ml-8">
+      <div class="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+        <p class="text-lg font-medium mb-4">Proceed to Payment</p>
+        <div data-controller="stripe-checkout" data-stripe-checkout-url-value="<%= stripe_session_cart_path(@current_cart.cart_id, province_id: params[:province_id]) %>"></div>
+      </div>
+    </div>
   <% end %>
 </div>

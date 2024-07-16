@@ -1,7 +1,7 @@
 class Product < ApplicationRecord
   validates :name, :description, :price, presence: true
   validates :name , uniqueness: true
-  validates :description, length: { maximum: 500 }
+  validates :description, length: { maximum: 2000 }
   has_many_attached :images
   belongs_to :category, optional: true
   has_many :cart_items
