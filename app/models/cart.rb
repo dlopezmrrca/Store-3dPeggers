@@ -1,6 +1,9 @@
 class Cart < ApplicationRecord
+  validates :cart_id, uniqueness: true
+
   has_many :cart_items, dependent: :destroy
   has_many :products, through: :cart_items
+
 
   before_create :set_cart_id
 

@@ -9,7 +9,7 @@
     <div id="products" class="min-w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
     <% @category.products.each do |product| %>
       <%= link_to product, class: "block bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 text-center" do %>
-        <%= image_tag product.images.first, class: "w-full h-40 object-cover rounded-lg mb-4" %>
+        <%= image_tag product.images.first, class: "w-full h-40 object-cover rounded-lg mb-4", alt: product.name %>
         <h2 class="font-bold text-2xl my-2"><%= product.name %></h2>
         <% before_price = product.price + 20 %>
         <p class="text-lg font-semibold text-gray-600 line-through"><%= number_to_currency before_price %></p>

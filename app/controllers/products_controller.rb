@@ -10,7 +10,7 @@ class ProductsController < ApplicationController
     @products = Product.all
     @products = @products.where("name LIKE ? OR description LIKE ?", "%#{@keyword}%", "%#{@keyword}%") if @keyword.present?
     @products = @products.where(category_id: @category_id) if @category_id.present?
-    @products = Product.paginate(page: params[:page], per_page: 8)
+    @products = @products.paginate(page: params[:page], per_page: 8)
 
     @categories = Category.all
   end

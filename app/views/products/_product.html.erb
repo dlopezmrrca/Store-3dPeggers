@@ -4,7 +4,7 @@
     <!-- Imagen grande del producto -->
     <% if product.images.any? %>
       <div class="w-full h-64 mb-5">
-        <%= image_tag product.images.first, class: "w-full h-full object-cover rounded-lg" %>
+        <%= image_tag product.images.first, class: "w-full h-full object-cover rounded-lg", alt: product.name %>
       </div>
     <% end %>
 
@@ -27,7 +27,7 @@
           <% product.images.drop(1).each do |image| %>
             <div class="w-full h-40">
               <%= link_to url_for(image), class: "block w-full h-full" do %>
-                <%= image_tag image, class: "w-full h-full object-cover rounded-lg" %>
+                <%= image_tag image, class: "w-full h-full object-cover rounded-lg", alt: product.name %>
               <% end %>
             </div>
           <% end %>

@@ -1,5 +1,5 @@
 class CartsController < ApplicationController
-  before_action :authenticate_customer! # Ensure customer is logged in
+  before_action :authenticate_customer!
   before_action :set_product, only: [:create, :destroy]
   before_action :set_province, only: [:show, :checkout, :stripe_session]
   before_action :set_current_customer
@@ -63,13 +63,11 @@ class CartsController < ApplicationController
       return
     end
 
-    # Ensure the current customer is set
     unless @current_customer
       redirect_to root_path, alert: 'No customer found'
       return
     end
 
-    # Create the order and order items
     ActiveRecord::Base.transaction do
       order = @current_customer.orders.create!(stripe_payment_id: params[:payment_intent], province_id: @province.id)
 
@@ -85,7 +83,6 @@ class CartsController < ApplicationController
       order.update!(total_price: total_order_price)
     end
 
-    # Clear the cart
     clear_cart_items
 
     session[:current_cart_id] = nil if @current_cart.cart_items.empty?
