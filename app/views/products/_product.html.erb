@@ -23,6 +23,7 @@
     <% if product.images.count > 1 %>
       <p class="my-5">
         <strong class="block font-medium mb-1 text-2xl">More Images:</strong>
+      </p>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <% product.images.drop(1).each do |image| %>
             <div class="w-full h-40">
@@ -32,7 +33,7 @@
             </div>
           <% end %>
         </div>
-      </p>
+
     <% end %>
   </div>
 
@@ -44,8 +45,10 @@
       <span class="block text-lg font-semibold text-gray-600 line-through"><%= number_to_currency before_price %></span>
       <span class="block text-3xl font-bold text-red-500"><%= number_to_currency product.price %></span>
     </p>
+
+    <!-- Botón "add to cart" -->
     
-    <div id="add-to-cart" class="my-5">
+    <div id="add-to-cart2" class="my-5">
       <%= render "products/add_to_cart", product: product %>
     </div>
   </div>

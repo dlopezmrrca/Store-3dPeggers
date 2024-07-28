@@ -1,22 +1,23 @@
 ActiveAdmin.register Order do
   permit_params :stripe_payment_id, :customer_id
-  remove_filter :total_price
+  remove_filter :total_price, :order_items # Removing unnecessary filters
+
+  filter :customer, collection: proc { Customer.all.map { |customer| [customer.email, customer.id] } }
+  filter :created_at
+  filter :updated_at
 
   index do
     selectable_column
     id_column
     column :customer
-    column :stripe_payment_id
     column :created_at
     column :updated_at
     actions
   end
 
-
   show do
     attributes_table do
       row :customer
-      row :stripe_payment_id
       row :created_at
       row :updated_at
     end
@@ -68,7 +69,7 @@ ActiveAdmin.register Order do
 
   form do |f|
     f.inputs do
-      f.input :customer
+      f.input :customer, as: :select, collection: Customer.all.map { |customer| [customer.email, customer.id] }
       f.input :stripe_payment_id
     end
     f.actions

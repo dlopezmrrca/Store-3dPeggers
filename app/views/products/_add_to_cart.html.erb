@@ -5,7 +5,7 @@
     <% end %>
   <% else %>
     <%= form_with url: carts_path, method: :post, local: true, class: "w-full" do |form| %>
-      <%= form.hidden_field :product_id, value: @product.id %>
+      <%= form.hidden_field :product_id, value: @product.id, autocomplete: nil %> <!-- Remove autocomplete attribute -->
       <div class="flex items-center space-x-4">
         <%= form.label :quantity, "Quantity:", class: "font-medium text-xl" %>
         <%= form.number_field :quantity, value: 1, min: 1, class: "rounded-lg font-semibold p-4 text-center text-xl bg-white border border-gray-300 w-20" %>
